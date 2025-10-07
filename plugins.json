@@ -1,0 +1,168 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=auratail.vip&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 29531,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hanzz68"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime"
+        ],
+        "version": 13,
+        "internalName": "Auratail",
+        "description": "Streaming anime dan donghua dari Auratail.vip",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Auratail.cs3",
+        "name": "Auratail"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=funmovieslix.com&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 18623,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "phisher98"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TVSeries"
+        ],
+        "version": 4,
+        "internalName": "Funmovieslix",
+        "description": "Streaming film dan serial terbaru dari FunMovieFlix",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Funmovieslix.cs3",
+        "name": "Funmovieslix"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://idlixplus.pro&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 23342,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated",
+            "Hanzz68"
+        ],
+        "tvTypes": [
+            "TvSeries",
+            "Movie",
+            "Anime",
+            "AsianDrama"
+        ],
+        "version": 21,
+        "internalName": "Idlix",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Idlix.cs3",
+        "name": "Idlix"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=nimeindo.web.id&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 11352,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hanzz68"
+        ],
+        "tvTypes": [
+            "Anime",
+            "AnimeMovie",
+            "TvSeries"
+        ],
+        "version": 3,
+        "internalName": "Nimeindo",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Nimeindo.cs3",
+        "name": "Nimeindo"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=nodrakor22.store&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 16152,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated",
+            "Hanzz68"
+        ],
+        "tvTypes": [
+            "AsianDrama",
+            "TvSeries",
+            "Movie"
+        ],
+        "version": 6,
+        "internalName": "Nodrakorid",
+        "description": "Includes: DutaMovie, Ngefilm, Nodrakorid, Multiplex, Pusatfilm",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Nodrakorid.cs3",
+        "name": "Nodrakorid"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=oppadrama&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 18020,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated",
+            "Hannzz68"
+        ],
+        "tvTypes": [
+            "Drama",
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "OppadramaProvider",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/OppadramaProvider.cs3",
+        "name": "OppadramaProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=ww73.pencurimovie.bond&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 12573,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "phisher98"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TVSeries"
+        ],
+        "version": 5,
+        "internalName": "Pencurimovie",
+        "description": "Streaming film dan serial terbaru dari Pencurimovie",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Pencurimovie.cs3",
+        "name": "Pencurimovie"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://samehadaku.world&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 16251,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated",
+            "Hannzz68"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "OVA",
+            "Anime"
+        ],
+        "version": 24,
+        "internalName": "Samehadaku",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Samehadaku.cs3",
+        "name": "Samehadaku"
+    }
+]
