@@ -35,7 +35,7 @@
         ],
         "version": 4,
         "internalName": "Funmovieslix",
-        "description": "Streaming film dan serial terbaru dari FunMovieFlix",
+        "description": "Streaming filmmovie dan serial terbaru dari FunMovieFlix",
         "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Funmovieslix.cs3",
         "name": "Funmovieslix"
     },
@@ -85,7 +85,7 @@
         "iconUrl": "https://www.google.com/s2/favicons?domain=nodrakor22.store&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
-        "fileSize": 16152,
+        "fileSize": 13031,
         "status": 1,
         "language": "id",
         "authors": [
@@ -99,7 +99,6 @@
         ],
         "version": 6,
         "internalName": "Nodrakorid",
-        "description": "Includes: DutaMovie, Ngefilm, Nodrakorid, Multiplex, Pusatfilm",
         "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Nodrakorid.cs3",
         "name": "Nodrakorid"
     },
@@ -140,7 +139,7 @@
         ],
         "version": 5,
         "internalName": "Pencurimovie",
-        "description": "Streaming film dan serial terbaru dari Pencurimovie",
+        "description": "Streaming filmMovie dan serial terbaru dari Pencurimovie",
         "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Pencurimovie.cs3",
         "name": "Pencurimovie"
     },
