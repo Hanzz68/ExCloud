@@ -62,6 +62,25 @@
         "name": "Idlix"
     },
     {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://moviebox.id&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hanzz68"
+        ],
+        "tvTypes": [
+            "TvSeries",
+            "Movie"
+        ],
+        "version": 5,
+        "internalName": "MovieBox",
+        "description": "Multi Language Movie and Series",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/MovieBox.cs3",
+        "name": "MovieBox"
+    },
+    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=nimeindo.web.id&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
