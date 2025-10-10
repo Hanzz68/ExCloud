@@ -82,27 +82,6 @@
         "name": "Nimeindo"
     },
     {
-        "iconUrl": "https://www.google.com/s2/favicons?domain=nodrakor22.store&sz=%size%",
-        "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
-        "fileSize": 16484,
-        "status": 1,
-        "language": "id",
-        "authors": [
-            "Hexated",
-            "Hanzz68"
-        ],
-        "tvTypes": [
-            "AsianDrama",
-            "TvSeries",
-            "Movie"
-        ],
-        "version": 6,
-        "internalName": "Nodrakorid",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Nodrakorid.cs3",
-        "name": "Nodrakorid"
-    },
-    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=oppadrama&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
