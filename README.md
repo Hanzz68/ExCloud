@@ -1,13 +1,13 @@
-# ExCloud - Cloudstream Extensions
+# StreamArc - Cloudstream Extensions
 
 ## ⚡ Features
 - Watch and download Movies, Series, and Anime directly.
 - Fast streaming and simple interface.
 - Fully compatible with the latest Cloudstream 3 builds.
 
-## 🌐 ExCloud
-Cloudstream plugin developed by **Hannzz68**  
-[GitHub Repository](https://github.com/Hanzz68/ExCloud)
+## 🌐 StreamArc
+Cloudstream plugin developed by **Zephyra77**  
+[GitHub Repository](https://github.com/Zephyra77/StreamArc)
 
 ### 🕹 Tools and Programming Languages Used
 <p align="left">
