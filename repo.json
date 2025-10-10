@@ -1,0 +1,8 @@
+{
+    "name": "ExCloud",
+    "description": "Cloudstream extensions collection",
+    "manifestVersion": 1,
+    "pluginLists": [
+      "https://raw.githubusercontent.com/Hanzz68/ExCloud/refs/heads/builds/plugins.json"
+    ]
+}
