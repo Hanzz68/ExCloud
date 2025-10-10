@@ -9,7 +9,7 @@
 Cloudstream plugin developed by **Hannzz68**  
 [GitHub Repository](https://github.com/Hanzz68/ExCloud)
 
-### 🕹 Tools and Programming languages used :
+### 🕹 Tools and Programming Languages Used
 <p align="left">
   <a href="https://skillicons.dev">
     <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,github,githubactions&theme=light&perline=5" />
@@ -29,5 +29,12 @@ We hereby issue this notice to inform you that these extensions function like an
 The content accessed through these extensions is **not hosted** by us or by the Cloudstream 3 application, but by third-party websites.  
 The responsibility for the use of this content lies solely with the user and their country’s or state’s laws.  
 If you believe that any intellectual property rights are being violated, please contact the actual file hosts, not the owners of this repository or the Cloudstream 3 app.
+
+Special Thanks
+- CloudStream Team 🧀  
+- Hexated Repo 🕹  
+- Sofie99 🧸  
+- phisher98 Repo 🇮🇳  
+- Saurabh Kaperwan 🇮🇳  
 
 **Thank you.**
