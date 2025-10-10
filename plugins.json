@@ -2,7 +2,7 @@
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=auratail.vip&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 29531,
         "status": 1,
         "language": "id",
@@ -16,13 +16,13 @@
         "version": 13,
         "internalName": "Auratail",
         "description": "Streaming anime dan donghua dari Auratail.vip",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Auratail.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Auratail.cs3",
         "name": "Auratail"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=funmovieslix.com&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 18623,
         "status": 1,
         "language": "id",
@@ -36,13 +36,13 @@
         "version": 4,
         "internalName": "Funmovieslix",
         "description": "Streaming filmmovie dan serial terbaru dari FunMovieFlix",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Funmovieslix.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Funmovieslix.cs3",
         "name": "Funmovieslix"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=https://idlixplus.pro&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 23342,
         "status": 1,
         "language": "id",
@@ -58,14 +58,14 @@
         ],
         "version": 21,
         "internalName": "Idlix",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Idlix.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Idlix.cs3",
         "name": "Idlix"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=tv7.lk21.am.in&sz=%size%",
         "jarFileSize": 81231,
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 18917,
         "status": 1,
         "language": "id",
@@ -79,14 +79,14 @@
         ],
         "version": 5,
         "internalName": "LayarkacaProvider",
-        "jarUrl": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/LayarkacaProvider.jar",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/LayarkacaProvider.cs3",
+        "jarUrl": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/LayarkacaProvider.jar",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/LayarkacaProvider.cs3",
         "name": "LayarkacaProvider"
     },
     {
         "iconUrl": "https://github.com/SaurabhKaperwan/CSX/raw/refs/heads/master/NetflixMirrorProvider/icon.png",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 45294,
         "status": 1,
         "authors": [
@@ -101,13 +101,13 @@
         "version": 32,
         "internalName": "NetflixMirrorProvider",
         "description": "Netflix, PrimeVideo, JioHotstar(Hotstar, Disney, Paramount, HBO, Peacock) Content in Multiple Languages",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/NetflixMirrorProvider.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/NetflixMirrorProvider.cs3",
         "name": "NetflixMirrorProvider"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=nimeindo.web.id&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 11352,
         "status": 1,
         "language": "id",
@@ -121,13 +121,13 @@
         ],
         "version": 3,
         "internalName": "Nimeindo",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Nimeindo.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Nimeindo.cs3",
         "name": "Nimeindo"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=oppadrama&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 18020,
         "status": 1,
         "language": "id",
@@ -142,13 +142,13 @@
         ],
         "version": 1,
         "internalName": "OppadramaProvider",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/OppadramaProvider.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/OppadramaProvider.cs3",
         "name": "OppadramaProvider"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=ww73.pencurimovie.bond&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 12573,
         "status": 1,
         "language": "id",
@@ -162,13 +162,13 @@
         "version": 5,
         "internalName": "Pencurimovie",
         "description": "Streaming filmMovie dan serial terbaru dari Pencurimovie",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Pencurimovie.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Pencurimovie.cs3",
         "name": "Pencurimovie"
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=https://samehadaku.world&sz=%size%",
         "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
         "fileSize": 16251,
         "status": 1,
         "language": "id",
@@ -183,7 +183,7 @@
         ],
         "version": 24,
         "internalName": "Samehadaku",
-        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/Samehadaku.cs3",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Samehadaku.cs3",
         "name": "Samehadaku"
     }
 ]
