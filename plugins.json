@@ -62,6 +62,27 @@
         "name": "Idlix"
     },
     {
+        "iconUrl": "https://github.com/SaurabhKaperwan/CSX/raw/refs/heads/master/NetflixMirrorProvider/icon.png",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
+        "fileSize": 45294,
+        "status": 1,
+        "authors": [
+            "megix"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "AsianDrama",
+            "Anime"
+        ],
+        "version": 32,
+        "internalName": "NetflixMirrorProvider",
+        "description": "Netflix, PrimeVideo, JioHotstar(Hotstar, Disney, Paramount, HBO, Peacock) Content in Multiple Languages",
+        "url": "https://raw.githubusercontent.com/Hanzz68/ExCloud/builds/NetflixMirrorProvider.cs3",
+        "name": "NetflixMirrorProvider"
+    },
+    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=nimeindo.web.id&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Hanzz68/ExCloud",
