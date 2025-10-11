@@ -125,14 +125,15 @@
         "name": "Nimeindo"
     },
     {
-        "iconUrl": "https://www.google.com/s2/favicons?domain=oploverz.care&sz=%size%",
+        "iconUrl": "https://oploverz.ltd/favicon.ico",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
-        "fileSize": 21323,
+        "fileSize": 21325,
         "status": 1,
         "language": "id",
         "authors": [
-            "Hexated"
+            "Hexated",
+            "Zephyra77"
         ],
         "tvTypes": [
             "AnimeMovie",
