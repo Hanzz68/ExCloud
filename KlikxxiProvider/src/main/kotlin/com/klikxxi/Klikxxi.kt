@@ -19,33 +19,10 @@ open class Klikxxi : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "All Movies",
-        "$mainUrl/?s=&search=advanced&post_type=movie&orderby=&genre=&movieyear=&country=&quality=&paged=%d" to "All Movies (Alt)",
-        "$mainUrl/series/page/%d/" to "All Series",
-        "$mainUrl/genre/action/page/%d/" to "Action",
-        "$mainUrl/genre/adventure/page/%d/" to "Adventure",
-        "$mainUrl/genre/animation/page/%d/" to "Animation",
-        "$mainUrl/genre/comedy/page/%d/" to "Comedy",
-        "$mainUrl/genre/crime/page/%d/" to "Crime",
-        "$mainUrl/genre/drama/page/%d/" to "Drama",
-        "$mainUrl/genre/fantasy/page/%d/" to "Fantasy",
-        "$mainUrl/genre/family/page/%d/" to "Family",
-        "$mainUrl/genre/horror/page/%d/" to "Horror",
-        "$mainUrl/genre/mystery/page/%d/" to "Mystery",
-        "$mainUrl/genre/romance/page/%d/" to "Romance",
-        "$mainUrl/genre/sci-fi/page/%d/" to "Science Fiction",
-        "$mainUrl/genre/thriller/page/%d/" to "Thriller",
-        "$mainUrl/country/asia/page/%d/" to "Asia",
-        "$mainUrl/country/india/page/%d/" to "India",
-        "$mainUrl/country/korea/page/%d/" to "Korea",
-        "$mainUrl/country/china/page/%d/" to "China",
-        "$mainUrl/country/europe/page/%d/" to "Europe",
-        "$mainUrl/western/page/%d/" to "Western Movies",
-        "$mainUrl/asian/page/%d/" to "Asian Movies",
-        "$mainUrl/western-series/page/%d/" to "Western Series",
-        "$mainUrl/korean-series/page/%d/" to "Korean Series",
-        "$mainUrl/india-series/page/%d/" to "India Series",
-        "$mainUrl/asia-series/page/%d/" to "Asia Series"
+        "$mainUrl/movie/page/%d/" to "Movies Terbaru",
+        "$mainUrl/country/india/page/%d/" to "Movies India",
+        "$mainUrl/country/korea/page/%d/" to "Movies Korea",
+        "$mainUrl/country/china/page/%d/" to "Movies China"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
