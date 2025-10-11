@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
 import java.net.URI
 
-open class Klikxxi : MainAPI() {
+class Klikxxi : MainAPI() {
     override var mainUrl = "https://www.klikxxi.com"
     private var directUrl: String? = null
     override var name = "Klikxxi"
@@ -19,17 +19,18 @@ open class Klikxxi : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "Movies Terbaru",
+        "$mainUrl/page/%d/" to "Movies Terbaru",
         "$mainUrl/country/india/page/%d/" to "Movies India",
         "$mainUrl/country/korea/page/%d/" to "Movies Korea",
         "$mainUrl/country/china/page/%d/" to "Movies China"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = request.data.format(page)
-        val document = app.get(fixUrl(url)).document
+        val url = if (request.data.contains("%d")) request.data.format(page) else request.data
+        val document = app.get(url).document
         val list = document.select("article.item, div.gmr-item, div.item-movie, div.item-series").mapNotNull { it.toSearchResult() }
-        return HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)))
+        val hasNext = document.select("a.next, a.page-numbers, a[rel=next]").isNotEmpty()
+        return HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)), hasNext)
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
@@ -63,8 +64,7 @@ open class Klikxxi : MainAPI() {
 
     private fun Element.toRecommendResult(): SearchResponse? {
         val link = selectFirst("a") ?: return null
-        val title = selectFirst("a > span.idmuvi-rp-title")?.text()?.trim()
-            ?: link.attr("title").ifBlank { link.text() }.trim()
+        val title = selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: link.attr("title").ifBlank { link.text() }.trim()
         val href = fixUrl(link.attr("href"))
         val posterUrl = fixUrlNull(selectFirst("a > img")?.attr("data-src") ?: selectFirst("a > img")?.attr("src"))?.fixImageQuality()
         return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
@@ -120,8 +120,8 @@ open class Klikxxi : MainAPI() {
                 this.tags = tags
                 this.year = year
                 this.rating = rating
-                addActors(actors)
                 this.recommendations = recommendations
+                addActors(actors)
                 addTrailer(trailer)
             }
         } else {
@@ -131,9 +131,9 @@ open class Klikxxi : MainAPI() {
                 this.tags = tags
                 this.year = year
                 this.rating = rating
+                this.recommendations = recommendations
                 addActors(actors)
                 addTrailer(trailer)
-                this.recommendations = recommendations
             }
         }
     }
@@ -153,15 +153,6 @@ open class Klikxxi : MainAPI() {
             }
         }
         return true
-    }
-
-    private fun Element.getImageAttr(): String? {
-        return when {
-            hasAttr("data-src") -> attr("abs:data-src")
-            hasAttr("data-lazy-src") -> attr("abs:data-lazy-src")
-            hasAttr("srcset") -> attr("abs:srcset").substringBefore(" ")
-            else -> attr("abs:src")
-        }
     }
 
     private fun Element?.getIframeAttr(): String? {
