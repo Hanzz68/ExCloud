@@ -19,7 +19,7 @@ open class Klikxxi : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/movie/page/%d/" to "Movies Terbaru",
+        "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "Movies Terbaru",
         "$mainUrl/country/india/page/%d/" to "Movies India",
         "$mainUrl/country/korea/page/%d/" to "Movies Korea",
         "$mainUrl/country/china/page/%d/" to "Movies China"
