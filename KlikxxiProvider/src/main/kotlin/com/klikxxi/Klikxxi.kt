@@ -16,11 +16,7 @@ open class Klikxxi : MainAPI() {
     override var name = "Klikxxi"
     override val hasMainPage = true
     override var lang = "id"
-    override val supportedTypes = setOf(
-        TvType.Movie,
-        TvType.TvSeries,
-        TvType.AsianDrama
-    )
+    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
         "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "All Movies",
@@ -51,7 +47,7 @@ open class Klikxxi : MainAPI() {
                 ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                addSub(episode)
+                this.addEpisode(episode)
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
@@ -65,15 +61,12 @@ open class Klikxxi : MainAPI() {
         val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: return null
         val href = this.selectFirst("a")!!.attr("href")
         val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr().fixImageQuality())
-        return newMovieSearchResponse(title, href, TvType.Movie) {
-            this.posterUrl = posterUrl
-        }
+        return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv").document.select("article.item").mapNotNull {
-            it.toSearchResult()
-        }
+        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv")
+            .document.select("article.item").mapNotNull { it.toSearchResult() }
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -92,13 +85,20 @@ open class Klikxxi : MainAPI() {
         val recommendations = document.select("div.idmuvi-rp ul li").mapNotNull { it.toRecommendResult() }
 
         return if (tvType == TvType.TvSeries) {
-            val episodes = document.select("div.vid-episodes a, div.gmr-listseries a").map { eps ->
+            val episodes = document.select("div.vid-episodes a, div.gmr-listseries a").mapNotNull { eps ->
                 val href = fixUrl(eps.attr("href"))
                 val name = eps.text()
                 val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
                 val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                Episode(href, name, season = if (name.contains(" ")) season else null, episode = episode)
-            }.filter { it.episode != null }
+                if (episode != null)
+                    newEpisode(href) {
+                        this.name = name
+                        this.season = if (name.contains(" ")) season else null
+                        this.episode = episode
+                    }
+                else null
+            }
+
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year
@@ -163,7 +163,5 @@ open class Klikxxi : MainAPI() {
         return this.replace(regex, "")
     }
 
-    private fun getBaseUrl(url: String): String {
-        return URI(url).let { "${it.scheme}://${it.host}" }
-    }
+    private fun getBaseUrl(url: String): String = URI(url).let { "${it.scheme}://${it.host}" }
 }
