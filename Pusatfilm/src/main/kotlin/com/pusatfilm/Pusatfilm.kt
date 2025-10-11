@@ -16,8 +16,7 @@ class Pusatfilm : MainAPI() {
     override var name = "Pusatfilm"
     override val hasMainPage = true
     override var lang = "id"
-    override val supportedTypes =
-        setOf(TvType.Movie, TvType.TvSeries, TvType.Anime, TvType.AsianDrama)
+    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
         "film-terbaru/page/%d/" to "Film Terbaru",
@@ -27,7 +26,7 @@ class Pusatfilm : MainAPI() {
         "drama-korea/page/%d/" to "Drama Korea",
         "west-series/page/%d/" to "West Series",
         "drama-china/page/%d/" to "Drama China",
-        "genre/fantasy/page/%d/" to "Film Fantasy"
+        "komedi/page/%d/" to "Film Komedi"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -71,7 +70,7 @@ class Pusatfilm : MainAPI() {
         val tvType = if (url.contains("/tv/")) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
-        val scoreValue = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toFloatOrNull()
+        val rating = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toFloatOrNull()?.let { Score(it) }
         val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
 
         return if (tvType == TvType.TvSeries) {
@@ -92,7 +91,7 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.score = scoreValue
+                this.score = rating
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -102,7 +101,7 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.score = scoreValue
+                this.score = rating
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -120,6 +119,7 @@ class Pusatfilm : MainAPI() {
         val iframe = listOf("src", "data-src", "data-litespeed-src").firstNotNullOfOrNull { key ->
             iframeEl?.attr(key)?.takeIf { it.isNotBlank() }
         }?.let { httpsify(it) }
+
         if (!iframe.isNullOrBlank()) {
             val refererBase = runCatching { getBaseUrl(iframe) }.getOrDefault(mainUrl) + "/"
             loadExtractor(iframe, refererBase, subtitleCallback, callback)
