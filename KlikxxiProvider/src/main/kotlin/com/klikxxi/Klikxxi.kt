@@ -29,25 +29,19 @@ open class Klikxxi : MainAPI() {
         val url = if (request.data.contains("%d")) request.data.format(page) else request.data
         val document = app.get(fixUrl(url)).document
         val list = document.select("article.item, div.gmr-item, div.item-movie, div.item-series").mapNotNull { it.toSearchResult() }
-        return if (list.isNotEmpty()) HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false))) else HomePageResponse(emptyList())
+        return HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)), hasNext = list.isNotEmpty())
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val link = this.selectFirst("h2.entry-title > a, a[title], a[href]") ?: return null
+        val link = selectFirst("h2.entry-title > a, a[title], a[href]") ?: return null
         val href = fixUrl(link.attr("href"))
         val rawTitle = link.attr("title").ifBlank { link.text() }.trim()
         val title = rawTitle.removePrefix("Permalink to: ").trim()
         if (title.isBlank()) return null
-        val img = this.selectFirst("img")
-        val posterUrl = fixUrlNull(
-            img?.attr("data-src")
-                ?.ifBlank { img.attr("data-lazy-src") }
-                ?.ifBlank { img.attr("src") }
-                ?: this.selectFirst("a > img")?.attr("src")
-        )?.fixImageQuality()
-        val quality = this.selectFirst("span.gmr-quality-item")?.text()?.trim()
-            ?: this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
-        val isSeries = this.selectFirst(".gmr-posttype-item")?.text()?.contains("TV", true) == true || href.contains("/series/") || href.contains("/tv/")
+        val posterUrl = selectFirst("img")?.getImageAttr()?.fixImageQuality()
+        val quality = selectFirst("span.gmr-quality-item")?.text()?.trim()
+            ?: select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
+        val isSeries = selectFirst(".gmr-posttype-item")?.text()?.contains("TV", true) == true || href.contains("/series/") || href.contains("/tv/")
         return if (isSeries) {
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
@@ -62,10 +56,10 @@ open class Klikxxi : MainAPI() {
     }
 
     private fun Element.toRecommendResult(): SearchResponse? {
-        val link = this.selectFirst("a") ?: return null
-        val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: link.attr("title").ifBlank { link.text() }.trim()
+        val link = selectFirst("a") ?: return null
+        val title = selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: link.attr("title").ifBlank { link.text() }.trim()
         val href = fixUrl(link.attr("href"))
-        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.attr("data-src") ?: this.selectFirst("a > img")?.attr("src"))?.fixImageQuality()
+        val posterUrl = selectFirst("a > img")?.getImageAttr()?.fixImageQuality()
         return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
     }
 
@@ -79,12 +73,7 @@ open class Klikxxi : MainAPI() {
         directUrl = getBaseUrl(fetch.url)
         val document = fetch.document
         val title = document.selectFirst("h1.entry-title, div.mvic-desc h3")?.text()?.substringBefore("Season")?.substringBefore("Episode")?.substringBefore("(")?.trim().orEmpty()
-        val poster = fixUrlNull(
-            document.selectFirst("figure.pull-left > img")?.attr("data-src")
-                ?: document.selectFirst("figure.pull-left > img")?.attr("src")
-                ?: document.selectFirst("div.entry-content img")?.attr("data-src")
-                ?: document.selectFirst("div.entry-content img")?.attr("src")
-        )?.fixImageQuality()
+        val poster = document.selectFirst("figure img, div.thumb img")?.getImageAttr()?.fixImageQuality()
         val description = document.selectFirst("div[itemprop=description] > p, div.desc p.f-desc, div.entry-content > p")?.text()?.trim()
         val tags = document.select("div.gmr-moviedata strong:contains(Genre:) > a").map { it.text() }
         val year = document.select("div.gmr-moviedata strong:contains(Year:) > a").text().trim().toIntOrNull()
@@ -161,10 +150,11 @@ open class Klikxxi : MainAPI() {
 
     private fun Element.getImageAttr(): String? {
         return when {
-            this.hasAttr("data-src") -> this.attr("abs:data-src")
-            this.hasAttr("data-lazy-src") -> this.attr("abs:data-lazy-src")
-            this.hasAttr("srcset") -> this.attr("abs:srcset").substringBefore(" ")
-            else -> this.attr("abs:src")
+            hasAttr("data-src") -> attr("abs:data-src")
+            hasAttr("data-lazy-src") -> attr("abs:data-lazy-src")
+            hasAttr("data-srcset") -> attr("abs:data-srcset").substringBefore(" ")
+            hasAttr("srcset") -> attr("abs:srcset").substringBefore(" ")
+            else -> attr("abs:src")
         }
     }
 
