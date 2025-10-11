@@ -1,13 +1,10 @@
 // use an integer for version numbers
 version = 31
 
-
 cloudstream {
     language = "id"
-    // All of these properties are optional, you can safely remove them
 
-    // description = "Lorem Ipsum"
-    authors = listOf("Hexated")
+    authors = listOf("Hexated", "Zephyra77")
 
     /**
      * Status int as the following:
@@ -15,7 +12,7 @@ cloudstream {
      * 1: Ok
      * 2: Slow
      * 3: Beta only
-     * */
+     */
     status = 1 // will be 3 if unspecified
     tvTypes = listOf(
         "AnimeMovie",
@@ -23,5 +20,5 @@ cloudstream {
         "OVA",
     )
 
-    iconUrl = "https://www.google.com/s2/favicons?domain=oploverz.care&sz=%size%"
+    iconUrl = "https://oploverz.ltd/favicon.ico"
 }
