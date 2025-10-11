@@ -125,6 +125,26 @@
         "name": "Nimeindo"
     },
     {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=oploverz.care&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
+        "fileSize": 21323,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "OVA"
+        ],
+        "version": 31,
+        "internalName": "OploverzProvider",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/OploverzProvider.cs3",
+        "name": "OploverzProvider"
+    },
+    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=oppadrama&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
