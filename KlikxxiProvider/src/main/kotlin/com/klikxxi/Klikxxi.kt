@@ -11,7 +11,6 @@ import org.jsoup.nodes.Element
 import java.net.URI
 
 open class Klikxxi : MainAPI() {
-
     override var mainUrl = "https://www.klikxxi.com"
     private var directUrl: String? = null
     override var name = "Klikxxi"
@@ -75,7 +74,7 @@ open class Klikxxi : MainAPI() {
         return if (isSeries) {
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                this.otherInfo = if (quality.isNullOrBlank()) null else quality
+                this.quality = getQualityFromString(quality)
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
