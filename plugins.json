@@ -230,6 +230,29 @@
         "name": "Pencurimovie"
     },
     {
+        "iconUrl": "https://v1.pusatfilm21info.net/favicon.ico",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
+        "fileSize": 15298,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Hexated",
+            "Zephyra77"
+        ],
+        "tvTypes": [
+            "AsianDrama",
+            "TvSeries",
+            "Movie",
+            "Anime"
+        ],
+        "version": 6,
+        "internalName": "Pusatfilm",
+        "description": "Pusatfilm \u2013 Streaming Film dan Series Indonesia",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/Pusatfilm.cs3",
+        "name": "Pusatfilm"
+    },
+    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=https://samehadaku.world&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
