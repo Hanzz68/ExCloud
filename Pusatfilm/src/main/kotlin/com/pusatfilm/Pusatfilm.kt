@@ -13,25 +13,22 @@ import java.net.URI
 class Pusatfilm : MainAPI() {
 
     override var mainUrl = "https://v1.pusatfilm21info.net"
-
     override var name = "Pusatfilm"
     override val hasMainPage = true
     override var lang = "id"
-    override val supportedTypes =
-        setOf(TvType.Movie, TvType.TvSeries, TvType.Anime, TvType.AsianDrama)
+    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime, TvType.AsianDrama)
 
-    override val mainPage =
-        mainPageOf(
-            "film-terbaru/page/%d/" to "Film Terbaru",
-            "trending/page/%d/" to "Film Trending",
-            "genre/action/page/%d/" to "Film Action",
-            "series-terbaru/page/%d/" to "Series Terbaru",
-            "drama-korea/page/%d/" to "Drama Korea",
-            "west-series/page/%d/" to "West Series",
-            "drama-china/page/%d/" to "Drama China",
-            "genre/comedy/page/%d/" to "Film Comedy",
-            "genre/drama/page/%d/" to "Film Drama"
-        )
+    override val mainPage = mainPageOf(
+        "film-terbaru/page/%d/" to "Film Terbaru",
+        "trending/page/%d/" to "Film Trending",
+        "genre/action/page/%d/" to "Film Action",
+        "series-terbaru/page/%d/" to "Series Terbaru",
+        "drama-korea/page/%d/" to "Drama Korea",
+        "west-series/page/%d/" to "West Series",
+        "drama-china/page/%d/" to "Drama China",
+        "genre/comedy/page/%d/" to "Film Comedy",
+        "genre/horror/page/%d/" to "Film Horror"
+    )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val data = request.data.format(page)
@@ -75,6 +72,7 @@ class Pusatfilm : MainAPI() {
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
         val ratingValue = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toFloatOrNull()
+        val scoreValue = ratingValue?.let { Score((it * 10).toInt()) }
         val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
 
         return if (tvType == TvType.TvSeries) {
@@ -89,12 +87,13 @@ class Pusatfilm : MainAPI() {
                     this.episode = episode
                 }
             }.filter { it.episode != null }
+
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.score = ratingValue
+                this.score = scoreValue
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -104,25 +103,19 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.score = ratingValue
+                this.score = scoreValue
                 addActors(actors)
                 addTrailer(trailer)
             }
         }
     }
 
-    override suspend fun loadLinks(
-        data: String,
-        isCasting: Boolean,
-        subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
-    ): Boolean {
+    override suspend fun loadLinks(data: String, isCasting: Boolean, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
         val document = app.get(data).document
         val iframeEl = document.selectFirst("div.gmr-embed-responsive iframe, div.movieplay iframe, iframe")
         val iframe = listOf("src", "data-src", "data-litespeed-src").firstNotNullOfOrNull { key ->
             iframeEl?.attr(key)?.takeIf { it.isNotBlank() }
         }?.let { httpsify(it) }
-
         if (!iframe.isNullOrBlank()) {
             val refererBase = runCatching { getBaseUrl(iframe) }.getOrDefault(mainUrl) + "/"
             loadExtractor(iframe, refererBase, subtitleCallback, callback)
