@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
 import java.net.URI
 
-class Klikxxi : MainAPI() {
+open class Klikxxi : MainAPI() {
     override var mainUrl = "https://www.klikxxi.com"
     private var directUrl: String? = null
     override var name = "Klikxxi"
@@ -19,36 +19,39 @@ class Klikxxi : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/page/%d/" to "Movies Terbaru",
+        "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "Movies Terbaru",
         "$mainUrl/country/india/page/%d/" to "Movies India",
         "$mainUrl/country/korea/page/%d/" to "Movies Korea",
         "$mainUrl/country/china/page/%d/" to "Movies China"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (request.data.contains("%d")) request.data.format(page) else request.data
-        val document = app.get(url).document
+        val url = request.data.format(page)
+        val document = app.get(fixUrl(url)).document
         val list = document.select("article.item, div.gmr-item, div.item-movie, div.item-series").mapNotNull { it.toSearchResult() }
-        val hasNext = document.select("a.next, a.page-numbers, a[rel=next]").isNotEmpty()
-        return HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)), hasNext)
+        return if (list.isNotEmpty()) {
+            HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)))
+        } else {
+            HomePageResponse(emptyList())
+        }
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val link = selectFirst("h2.entry-title > a, a[title], a[href]") ?: return null
+        val link = this.selectFirst("h2.entry-title > a, a[title], a[href]") ?: return null
         val href = fixUrl(link.attr("href"))
         val rawTitle = link.attr("title").ifBlank { link.text() }.trim()
         val title = rawTitle.removePrefix("Permalink to: ").trim()
         if (title.isBlank()) return null
-        val img = selectFirst("img")
+        val img = this.selectFirst("img")
         val posterUrl = fixUrlNull(
             img?.attr("data-src")
                 ?.ifBlank { img.attr("data-lazy-src") }
                 ?.ifBlank { img.attr("src") }
-                ?: selectFirst("a > img")?.attr("src")
+                ?: this.selectFirst("a > img")?.attr("src")
         )?.fixImageQuality()
-        val quality = selectFirst("span.gmr-quality-item")?.text()?.trim()
-            ?: select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
-        val isSeries = selectFirst(".gmr-posttype-item")?.text()?.contains("TV", true) == true || href.contains("/series/") || href.contains("/tv/")
+        val quality = this.selectFirst("span.gmr-quality-item")?.text()?.trim()
+            ?: this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
+        val isSeries = this.selectFirst(".gmr-posttype-item")?.text()?.contains("TV", true) == true || href.contains("/series/") || href.contains("/tv/")
         return if (isSeries) {
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
@@ -63,10 +66,10 @@ class Klikxxi : MainAPI() {
     }
 
     private fun Element.toRecommendResult(): SearchResponse? {
-        val link = selectFirst("a") ?: return null
-        val title = selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: link.attr("title").ifBlank { link.text() }.trim()
+        val link = this.selectFirst("a") ?: return null
+        val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: link.attr("title").ifBlank { link.text() }.trim()
         val href = fixUrl(link.attr("href"))
-        val posterUrl = fixUrlNull(selectFirst("a > img")?.attr("data-src") ?: selectFirst("a > img")?.attr("src"))?.fixImageQuality()
+        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.attr("data-src") ?: this.selectFirst("a > img")?.attr("src"))?.fixImageQuality()
         return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
     }
 
@@ -120,8 +123,8 @@ class Klikxxi : MainAPI() {
                 this.tags = tags
                 this.year = year
                 this.rating = rating
-                this.recommendations = recommendations
                 addActors(actors)
+                this.recommendations = recommendations
                 addTrailer(trailer)
             }
         } else {
@@ -131,9 +134,9 @@ class Klikxxi : MainAPI() {
                 this.tags = tags
                 this.year = year
                 this.rating = rating
-                this.recommendations = recommendations
                 addActors(actors)
                 addTrailer(trailer)
+                this.recommendations = recommendations
             }
         }
     }
@@ -153,6 +156,15 @@ class Klikxxi : MainAPI() {
             }
         }
         return true
+    }
+
+    private fun Element.getImageAttr(): String? {
+        return when {
+            this.hasAttr("data-src") -> this.attr("abs:data-src")
+            this.hasAttr("data-lazy-src") -> this.attr("abs:data-lazy-src")
+            this.hasAttr("srcset") -> this.attr("abs:srcset").substringBefore(" ")
+            else -> this.attr("abs:src")
+        }
     }
 
     private fun Element?.getIframeAttr(): String? {
