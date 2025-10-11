@@ -3,15 +3,12 @@ package com.pusatfilm
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.utils.httpsify
-import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
 import java.net.URI
 
 class Pusatfilm : MainAPI() {
-
     override var mainUrl = "https://v1.pusatfilm21info.net"
     override var name = "Pusatfilm"
     override val hasMainPage = true
@@ -40,19 +37,24 @@ class Pusatfilm : MainAPI() {
     private fun Element.toSearchResult(): SearchResponse? {
         val title = this.selectFirst("h2.entry-title > a")?.text()?.trim() ?: return null
         val href = fixUrl(this.selectFirst("a")!!.attr("href"))
-        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr()).fixImageQuality()
+        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.attr("src")).fixImageQuality()
         val quality = this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
+        val scoreText = this.select("div.gmr-meta-rating > span[itemprop=ratingValue]").text().toFloatOrNull()
+        val scoreValue = scoreText?.let { Score.from10(it) }
+
         return if (quality.isEmpty()) {
             val episode = Regex("Episode\\s?([0-9]+)").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
                 ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newAnimeSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
                 addSub(episode)
+                this.score = scoreValue
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = posterUrl
                 addQuality(quality)
+                this.score = scoreValue
             }
         }
     }
@@ -65,16 +67,14 @@ class Pusatfilm : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
         val title = document.selectFirst("h1.entry-title")?.text()?.substringBefore("Season")?.substringBefore("Episode")?.trim().toString()
-        val poster = fixUrlNull(document.selectFirst("figure.pull-left > img")?.getImageAttr())
+        val poster = fixUrlNull(document.selectFirst("figure.pull-left > img")?.attr("src"))
         val tags = document.select("div.gmr-moviedata a").map { it.text() }
         val year = document.select("div.gmr-moviedata strong:contains(Year:) > a").text().trim().toIntOrNull()
         val tvType = if (url.contains("/tv/")) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
-
         val ratingValue = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toFloatOrNull()
-        val scoreValue = ratingValue?.let { Score.create(it) }
-
+        val scoreValue = ratingValue?.let { Score.from10(it) }
         val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
 
         return if (tvType == TvType.TvSeries) {
@@ -112,26 +112,22 @@ class Pusatfilm : MainAPI() {
         }
     }
 
-    override suspend fun loadLinks(data: String, isCasting: Boolean, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
+    override suspend fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         val document = app.get(data).document
         val iframeEl = document.selectFirst("div.gmr-embed-responsive iframe, div.movieplay iframe, iframe")
         val iframe = listOf("src", "data-src", "data-litespeed-src").firstNotNullOfOrNull { key ->
             iframeEl?.attr(key)?.takeIf { it.isNotBlank() }
-        }?.let { httpsify(it) }
+        }?.let { it }
         if (!iframe.isNullOrBlank()) {
             val refererBase = runCatching { getBaseUrl(iframe) }.getOrDefault(mainUrl) + "/"
             loadExtractor(iframe, refererBase, subtitleCallback, callback)
         }
         return true
-    }
-
-    private fun Element.getImageAttr(): String {
-        return when {
-            this.hasAttr("data-src") -> this.attr("abs:data-src")
-            this.hasAttr("data-lazy-src") -> this.attr("abs:data-lazy-src")
-            this.hasAttr("srcset") -> this.attr("abs:srcset").substringBefore(" ")
-            else -> this.attr("abs:src")
-        }
     }
 
     private fun String?.fixImageQuality(): String? {
