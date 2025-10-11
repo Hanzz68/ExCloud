@@ -33,15 +33,17 @@ open class Klikxxi : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val data = request.data.format(page)
         val document = app.get("$mainUrl/$data").document
-        val home = document.select("article.item").mapNotNull { it.toSearchResult() }
+        val home = document.select("article.item, div.gmr-item").mapNotNull { it.toSearchResult() }
         return newHomePageResponse(request.name, home)
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val title = this.selectFirst("h2.entry-title > a")?.text()?.trim() ?: return null
-        val href = fixUrl(this.selectFirst("a")!!.attr("href"))
-        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr()).fixImageQuality()
-        val quality = this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
+        val linkElement = this.selectFirst("a[href][title], a[href]") ?: return null
+        val href = fixUrl(linkElement.attr("href"))
+        val title = linkElement.attr("title").ifBlank { linkElement.text() }.trim()
+        if (title.isBlank()) return null
+        val posterUrl = fixUrlNull(this.selectFirst("img")?.getImageAttr()).fixImageQuality()
+        val quality = this.select("span.gmr-quality-item, div.gmr-qual").text().trim().replace("-", "")
         return if (quality.isEmpty()) {
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) { this.posterUrl = posterUrl }
         } else {
@@ -50,15 +52,16 @@ open class Klikxxi : MainAPI() {
     }
 
     private fun Element.toRecommendResult(): SearchResponse? {
-        val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: return null
-        val href = this.selectFirst("a")!!.attr("href")
-        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr().fixImageQuality())
+        val linkElement = this.selectFirst("a[href][title], a[href]") ?: return null
+        val title = linkElement.attr("title").ifBlank { linkElement.text() }.trim()
+        val href = fixUrl(linkElement.attr("href"))
+        val posterUrl = fixUrlNull(this.selectFirst("img")?.getImageAttr()).fixImageQuality()
         return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
         return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv").document
-            .select("article.item")
+            .select("article.item, div.gmr-item")
             .mapNotNull { it.toSearchResult() }
     }
 
