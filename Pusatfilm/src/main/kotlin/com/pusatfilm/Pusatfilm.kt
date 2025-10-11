@@ -28,7 +28,7 @@ class Pusatfilm : MainAPI() {
             "drama-korea/page/%d/" to "Drama Korea",
             "west-series/page/%d/" to "West Series",
             "drama-china/page/%d/" to "Drama China",
-            "genre/comedy/page/%d/" to "Film Comedy"
+            "genre/comedy/page/%d/" to "Comedy"
         )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -72,30 +72,28 @@ class Pusatfilm : MainAPI() {
         val tvType = if (url.contains("/tv/")) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
-        val rating = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingInt()
+        val score = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingInt()
         val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
 
         return if (tvType == TvType.TvSeries) {
-            val episodes = document.select("div.vid-episodes a, div.gmr-listseries a")
-                .map { eps ->
-                    val href = fixUrl(eps.attr("href"))
-                    val name = eps.text()
-                    val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                    val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                    newEpisode(href) {
-                        this.name = name
-                        this.season = if (name.contains(" ")) season else null
-                        this.episode = episode
-                    }
+            val episodes = document.select("div.vid-episodes a, div.gmr-listseries a").map { eps ->
+                val href = fixUrl(eps.attr("href"))
+                val name = eps.text()
+                val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
+                val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
+                newEpisode(href) {
+                    this.name = name
+                    this.season = if (name.contains(" ")) season else null
+                    this.episode = episode
                 }
-                .filter { it.episode != null }
+            }.filter { it.episode != null }
 
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.rating = rating
+                this.score = score
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -105,28 +103,23 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.rating = rating
+                this.score = score
                 addActors(actors)
                 addTrailer(trailer)
             }
         }
     }
 
-    override suspend fun loadLinks(
-        data: String,
-        isCasting: Boolean,
-        subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
-    ): Boolean {
+    override suspend fun loadLinks(data: String, isCasting: Boolean, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
         val document = app.get(data).document
         val iframeEl = document.selectFirst("div.gmr-embed-responsive iframe, div.movieplay iframe, iframe")
-        val iframe = listOf("src", "data-src", "data-litespeed-src")
-            .firstNotNullOfOrNull { key -> iframeEl?.attr(key)?.takeIf { it.isNotBlank() } }
-            ?.let { httpsify(it) }
+        val iframe = listOf("src", "data-src", "data-litespeed-src").firstNotNullOfOrNull { key ->
+            iframeEl?.attr(key)?.takeIf { it.isNotBlank() }
+        }?.let { httpsify(it) }
 
         if (!iframe.isNullOrBlank()) {
             val refererBase = runCatching { getBaseUrl(iframe) }.getOrDefault(mainUrl) + "/"
-            Kotakajaib().loadUrl(iframe, refererBase, subtitleCallback, callback)
+            loadExtractor(iframe, refererBase, subtitleCallback, callback)
         }
         return true
     }
