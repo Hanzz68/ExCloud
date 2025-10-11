@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element
 import java.net.URI
 
 open class Klikxxi : MainAPI() {
-
     override var mainUrl = "https://www.klikxxi.com"
     private var directUrl: String? = null
     override var name = "Klikxxi"
@@ -19,22 +18,22 @@ open class Klikxxi : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/page/%d/?s&search=advanced&post_type=movie" to "All Movies",
-        "$mainUrl/asian/page/%d/" to "Asian Movies",
-        "$mainUrl/western/page/%d/" to "Western Movies",
-        "$mainUrl/india/page/%d/" to "India Movies",
-        "$mainUrl/korean/page/%d/" to "Korean Movies",
-        "$mainUrl/series/page/%d/" to "All Series",
-        "$mainUrl/western-series/page/%d/" to "Western Series",
-        "$mainUrl/korean-series/page/%d/" to "Korean Series",
-        "$mainUrl/india-series/page/%d/" to "India Series"
+        "page/%d/?s&search=advanced&post_type=movie" to "All Movies",
+        "asian/page/%d/" to "Asian Movies",
+        "western/page/%d/" to "Western Movies",
+        "india/page/%d/" to "India Movies",
+        "korean/page/%d/" to "Korean Movies",
+        "series/page/%d/" to "All Series",
+        "western-series/page/%d/" to "Western Series",
+        "korean-series/page/%d/" to "Korean Series",
+        "india-series/page/%d/" to "India Series"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (request.data.contains("%d")) request.data.format(page) else request.data
-        val document = app.get(fixUrl(url)).document
-        val list = document.select("article.item").mapNotNull { it.toSearchResult() }
-        return HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)))
+        val data = request.data.format(page)
+        val document = app.get("$mainUrl/$data").document
+        val home = document.select("article.item").mapNotNull { it.toSearchResult() }
+        return newHomePageResponse(request.name, home)
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
@@ -47,12 +46,12 @@ open class Klikxxi : MainAPI() {
                 ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                this.addEpisode(episode)
+                this.episode = episode
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = posterUrl
-                addQuality(quality)
+                this.quality = getQualityFromString(quality)
             }
         }
     }
@@ -61,12 +60,15 @@ open class Klikxxi : MainAPI() {
         val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: return null
         val href = this.selectFirst("a")!!.attr("href")
         val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr().fixImageQuality())
-        return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
+        return newMovieSearchResponse(title, href, TvType.Movie) {
+            this.posterUrl = posterUrl
+        }
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv")
-            .document.select("article.item").mapNotNull { it.toSearchResult() }
+        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv").document.select("article.item").mapNotNull {
+            it.toSearchResult()
+        }
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -90,15 +92,12 @@ open class Klikxxi : MainAPI() {
                 val name = eps.text()
                 val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
                 val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                if (episode != null)
-                    newEpisode(href) {
-                        this.name = name
-                        this.season = if (name.contains(" ")) season else null
-                        this.episode = episode
-                    }
-                else null
+                if (episode != null) newEpisode(href) {
+                    this.name = name
+                    this.season = if (name.contains(" ")) season else null
+                    this.episode = episode
+                } else null
             }
-
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year
@@ -163,5 +162,7 @@ open class Klikxxi : MainAPI() {
         return this.replace(regex, "")
     }
 
-    private fun getBaseUrl(url: String): String = URI(url).let { "${it.scheme}://${it.host}" }
+    private fun getBaseUrl(url: String): String {
+        return URI(url).let { "${it.scheme}://${it.host}" }
+    }
 }
