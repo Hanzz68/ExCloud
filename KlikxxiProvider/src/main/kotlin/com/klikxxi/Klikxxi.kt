@@ -34,10 +34,15 @@ open class Klikxxi : MainAPI() {
         "india-series/page/%d/" to "India Series"
     )
 
-    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
         val data = request.data.format(page)
         val document = app.get("$mainUrl/$data").document
-        val home = document.select("article.item").mapNotNull { it.toSearchResult() }
+        val home = document.select("article.item").mapNotNull {
+            it.toSearchResult()
+        }
         return newHomePageResponse(request.name, home)
     }
 
@@ -47,11 +52,8 @@ open class Klikxxi : MainAPI() {
         val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr()).fixImageQuality()
         val quality = this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
         return if (quality.isEmpty()) {
-            val episode = Regex("Episode\\s?([0-9]+)").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
-                ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                addSub(episode)
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
@@ -71,25 +73,38 @@ open class Klikxxi : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv").document.select("article.item").mapNotNull {
-            it.toSearchResult()
-        }
+        return app.get("$mainUrl/?s=$query&post_type[]=post&post_type[]=tv").document.select("article.item")
+            .mapNotNull {
+                it.toSearchResult()
+            }
     }
 
     override suspend fun load(url: String): LoadResponse {
         val fetch = app.get(url)
         directUrl = getBaseUrl(fetch.url)
         val document = fetch.document
-        val title = document.selectFirst("h1.entry-title")?.text()?.substringBefore("Season")?.substringBefore("Episode")?.trim().toString()
-        val poster = fixUrlNull(document.selectFirst("figure.pull-left > img")?.getImageAttr())?.fixImageQuality()
+
+        val title =
+            document.selectFirst("h1.entry-title")?.text()?.substringBefore("Season")?.substringBefore("Episode")?.trim()
+                .toString()
+        val poster =
+            fixUrlNull(document.selectFirst("figure.pull-left > img")?.getImageAttr())?.fixImageQuality()
         val tags = document.select("span.gmr-movie-genre:contains(Genre:) > a").map { it.text() }
-        val year = document.select("span.gmr-movie-genre:contains(Year:) > a").text().trim().toIntOrNull()
-        val tvType = if (url.contains("/series/")) TvType.TvSeries else TvType.Movie
+
+        val year =
+            document.select("span.gmr-movie-genre:contains(Year:) > a").text().trim().toIntOrNull()
+        val tvType = if (url.contains("/tv/") || url.contains("/series/")) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
-        val rating = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingInt()
-        val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
-        val recommendations = document.select("div.idmuvi-rp ul li").mapNotNull { it.toRecommendResult() }
+        val rating =
+            document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()
+                ?.toDoubleOrNull()?.toInt()
+        val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")
+            ?.map { it.select("a").text() }
+
+        val recommendations = document.select("div.idmuvi-rp ul li").mapNotNull {
+            it.toRecommendResult()
+        }
 
         return if (tvType == TvType.TvSeries) {
             val episodes = document.select("div.vid-episodes a, div.gmr-listseries a").map { eps ->
@@ -97,7 +112,11 @@ open class Klikxxi : MainAPI() {
                 val name = eps.text()
                 val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
                 val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                Episode(href, name, season = if (name.contains(" ")) season else null, episode = episode)
+                newEpisode(href) {
+                    this.name = name
+                    this.season = if (name.contains(" ")) season else null
+                    this.episode = episode
+                }
             }.filter { it.episode != null }
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
@@ -123,13 +142,21 @@ open class Klikxxi : MainAPI() {
         }
     }
 
-    override suspend fun loadLinks(data: String, isCasting: Boolean, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
+    override suspend fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+
         val document = app.get(data).document
         val id = document.selectFirst("div#muvipro_player_content_id")?.attr("data-id")
+
         if (id.isNullOrEmpty()) {
             document.select("ul.muvipro-player-tabs li a").apmap { ele ->
                 val iframe = app.get(fixUrl(ele.attr("href"))).document.selectFirst("div.gmr-embed-responsive iframe")
                     .getIframeAttr()?.let { httpsify(it) } ?: return@apmap
+
                 loadExtractor(iframe, "$directUrl/", subtitleCallback, callback)
             }
         } else {
@@ -138,10 +165,14 @@ open class Klikxxi : MainAPI() {
                     "$directUrl/wp-admin/admin-ajax.php",
                     data = mapOf("action" to "muvipro_player_content", "tab" to ele.attr("id"), "post_id" to "$id")
                 ).document.select("iframe").attr("src").let { httpsify(it) }
+
                 loadExtractor(server, "$directUrl/", subtitleCallback, callback)
+
             }
         }
+
         return true
+
     }
 
     private fun Element.getImageAttr(): String? {
@@ -164,6 +195,9 @@ open class Klikxxi : MainAPI() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let { "${it.scheme}://${it.host}" }
+        return URI(url).let {
+            "${it.scheme}://${it.host}"
+        }
     }
+
 }
