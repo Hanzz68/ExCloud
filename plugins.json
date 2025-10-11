@@ -62,6 +62,27 @@
         "name": "Idlix"
     },
     {
+        "iconUrl": "https://www.klikxxi.com/favicon.ico",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
+        "fileSize": 16869,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "Zephyra77"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "AsianDrama"
+        ],
+        "version": 10,
+        "internalName": "KlikxxiProvider",
+        "description": "Klikxxi menampilkan Movie dan series",
+        "url": "https://raw.githubusercontent.com/Zephyra77/StreamArc/builds/KlikxxiProvider.cs3",
+        "name": "KlikxxiProvider"
+    },
+    {
         "iconUrl": "https://www.google.com/s2/favicons?domain=kuramanime.com&sz=%size%",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Zephyra77/StreamArc",
