@@ -42,11 +42,8 @@ open class Klikxxi : MainAPI() {
         val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr()).fixImageQuality()
         val quality = this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
         return if (quality.isEmpty()) {
-            val episode = Regex("Episode\\s?([0-9]+)").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
-                ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                this.episode = episode
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
@@ -90,12 +87,12 @@ open class Klikxxi : MainAPI() {
             val episodes = document.select("div.vid-episodes a, div.gmr-listseries a").mapNotNull { eps ->
                 val href = fixUrl(eps.attr("href"))
                 val name = eps.text()
-                val episode = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                val season = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
-                if (episode != null) newEpisode(href) {
+                val episodeNum = name.split(" ").lastOrNull()?.filter { it.isDigit() }?.toIntOrNull()
+                val seasonNum = name.split(" ").firstOrNull()?.filter { it.isDigit() }?.toIntOrNull()
+                if (episodeNum != null) newEpisode(href) {
                     this.name = name
-                    this.season = if (name.contains(" ")) season else null
-                    this.episode = episode
+                    this.season = if (name.contains(" ")) seasonNum else null
+                    this.episode = episodeNum
                 } else null
             }
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
