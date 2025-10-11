@@ -16,22 +16,18 @@ class Pusatfilm : MainAPI() {
     override var name = "Pusatfilm"
     override val hasMainPage = true
     override var lang = "id"
-    override val supportedTypes =
-        setOf(TvType.Movie, TvType.TvSeries, TvType.Anime, TvType.AsianDrama)
+    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(
         "film-terbaru/page/%d/" to "Film Terbaru",
         "trending/page/%d/" to "Film Trending",
-        "populer/page/%d/" to "Film Populer",
+        "genre/action/page/%d/" to "Film Action",
         "series-terbaru/page/%d/" to "Series Terbaru",
         "drama-korea/page/%d/" to "Drama Korea",
-        "drama-jepang/page/%d/" to "Drama Jepang",
-        "drama-china/page/%d/" to "Drama China",
         "west-series/page/%d/" to "West Series",
-        "genre/action/page/%d/" to "Film Action",
-        "genre/comedy/page/%d/" to "Film Comedy",
-        "genre/romance/page/%d/" to "Film Romance",
-        "genre/horror/page/%d/" to "Film Horror"
+        "drama-china/page/%d/" to "Drama China",
+        "drama-jepang/page/%d/" to "Drama Jepang",
+        "genre/comedy/page/%d/" to "Film Komedi"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -46,20 +42,20 @@ class Pusatfilm : MainAPI() {
         val href = fixUrl(this.selectFirst("a")!!.attr("href"))
         val posterUrl = fixUrlNull(this.selectFirst("a > img")?.getImageAttr()).fixImageQuality()
         val quality = this.select("div.gmr-qual, div.gmr-quality-item > a").text().trim().replace("-", "")
-        val rating = this.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingInt()
+        val rating = this.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingFloat()?.toScore()
         return if (quality.isEmpty()) {
             val episode = Regex("Episode\\s?([0-9]+)").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
                 ?: this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newAnimeSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                this.rating = rating
                 addSub(episode)
+                this.score = rating
             }
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = posterUrl
-                this.rating = rating
                 addQuality(quality)
+                this.score = rating
             }
         }
     }
@@ -78,7 +74,7 @@ class Pusatfilm : MainAPI() {
         val tvType = if (url.contains("/tv/")) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
         val trailer = document.selectFirst("ul.gmr-player-nav li a.gmr-trailer-popup")?.attr("href")
-        val rating = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingInt()
+        val rating = document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()?.toRatingFloat()?.toScore()
         val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
 
         return if (tvType == TvType.TvSeries) {
@@ -98,7 +94,7 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.rating = rating
+                this.score = rating
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -108,7 +104,7 @@ class Pusatfilm : MainAPI() {
                 this.year = year
                 this.plot = description
                 this.tags = tags
-                this.rating = rating
+                this.score = rating
                 addActors(actors)
                 addTrailer(trailer)
             }
@@ -119,8 +115,8 @@ class Pusatfilm : MainAPI() {
         val document = app.get(data).document
         val iframeEl = document.selectFirst("div.gmr-embed-responsive iframe, div.movieplay iframe, iframe")
         val iframe = listOf("src", "data-src", "data-litespeed-src").firstNotNullOfOrNull { key ->
-            iframeEl?.attr(key)?.takeIf { it.isNotBlank() }?.let { httpsify(it) }
-        }
+            iframeEl?.attr(key)?.takeIf { it.isNotBlank() }
+        }?.let { httpsify(it) }
         if (!iframe.isNullOrBlank()) {
             val refererBase = runCatching { getBaseUrl(iframe) }.getOrDefault(mainUrl) + "/"
             loadExtractor(iframe, refererBase, subtitleCallback, callback)
@@ -146,4 +142,8 @@ class Pusatfilm : MainAPI() {
     private fun getBaseUrl(url: String): String {
         return URI(url).let { "${it.scheme}://${it.host}" }
     }
+
+    private fun String.toRatingFloat(): Float? = this.toFloatOrNull()
+    private fun Float.toScore(): Score = Score((this * 10).toInt())
+    private fun Int.toScore(): Score = Score(this)
 }
