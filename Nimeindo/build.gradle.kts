@@ -5,7 +5,7 @@ cloudstream {
     language = "id"
 
     // Nama pembuat ekstensi
-    authors = listOf("Hanzz68")
+    authors = listOf("Zephyra77")
 
     /**
      * Status:

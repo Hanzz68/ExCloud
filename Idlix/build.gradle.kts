@@ -4,7 +4,7 @@ version = 21
 cloudstream {
     language = "id"
 
-    authors = listOf("Hexated", "Hanzz68")
+    authors = listOf("Hexated", "Zephyra77")
 
     /**
      * Status int as the following:

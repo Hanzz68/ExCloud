@@ -8,7 +8,7 @@ cloudstream {
     description = "Streaming anime dan donghua dari Auratail.vip"
 
     // Nama pembuat ekstensi
-    authors = listOf("Hanzz68")
+    authors = listOf("Zephyra77")
 
     /**
      * Status:
