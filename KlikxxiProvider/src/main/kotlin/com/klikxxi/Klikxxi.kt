@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element
 import java.net.URI
 
 open class Klikxxi : MainAPI() {
-    override var mainUrl = "https://www.klikxxi.com"
+    override var mainUrl = "https://klikxxi.me"
     private var directUrl: String? = null
     override var name = "Klikxxi"
     override val hasMainPage = true
@@ -26,14 +26,10 @@ open class Klikxxi : MainAPI() {
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = request.data.format(page)
+        val url = if (request.data.contains("%d")) request.data.format(page) else request.data
         val document = app.get(fixUrl(url)).document
         val list = document.select("article.item, div.gmr-item, div.item-movie, div.item-series").mapNotNull { it.toSearchResult() }
-        return if (list.isNotEmpty()) {
-            HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false)))
-        } else {
-            HomePageResponse(emptyList())
-        }
+        return if (list.isNotEmpty()) HomePageResponse(listOf(HomePageList(request.name, list, isHorizontalImages = false))) else HomePageResponse(emptyList())
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
@@ -83,7 +79,12 @@ open class Klikxxi : MainAPI() {
         directUrl = getBaseUrl(fetch.url)
         val document = fetch.document
         val title = document.selectFirst("h1.entry-title, div.mvic-desc h3")?.text()?.substringBefore("Season")?.substringBefore("Episode")?.substringBefore("(")?.trim().orEmpty()
-        val poster = fixUrlNull(document.selectFirst("figure.pull-left > img")?.attr("data-src") ?: document.selectFirst("figure.pull-left > img")?.attr("src"))?.fixImageQuality()
+        val poster = fixUrlNull(
+            document.selectFirst("figure.pull-left > img")?.attr("data-src")
+                ?: document.selectFirst("figure.pull-left > img")?.attr("src")
+                ?: document.selectFirst("div.entry-content img")?.attr("data-src")
+                ?: document.selectFirst("div.entry-content img")?.attr("src")
+        )?.fixImageQuality()
         val description = document.selectFirst("div[itemprop=description] > p, div.desc p.f-desc, div.entry-content > p")?.text()?.trim()
         val tags = document.select("div.gmr-moviedata strong:contains(Genre:) > a").map { it.text() }
         val year = document.select("div.gmr-moviedata strong:contains(Year:) > a").text().trim().toIntOrNull()
