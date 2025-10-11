@@ -37,12 +37,12 @@ subprojects {
     apply(plugin = "com.lagradost.cloudstream3.gradle")
 
     cloudstream {
-        setRepo(System.getenv("GITHUB_REPOSITORY") ?: "https://github.com/Hanzz68/ExCloud")
-        authors = listOf("Hanzz68")
+        setRepo(System.getenv("GITHUB_REPOSITORY") ?: "https://github.com/Zephyra77/StreamArc")
+        authors = listOf("Zephyra77")
     }
 
     android {
-        namespace = "com.hanzz68"
+        namespace = "com.zephyra77"
 
         defaultConfig {
             minSdk = 21
